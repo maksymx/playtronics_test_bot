@@ -6,6 +6,7 @@ httptools==0.0.13
 idna==2.8
 itsdangerous==0.24
 Jinja2==2.8
+jinja2-sanic==0.1.2
 MarkupSafe==0.23
 multidict==4.5.2
 pyaml==16.9.0
