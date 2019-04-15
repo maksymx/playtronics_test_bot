@@ -34,7 +34,7 @@ class Bot(object):
         # an OAuth token. We can connect to the client without authenticating
         # by passing an empty string as a token and then reinstantiating the
         # client with a valid OAuth token once we have one.
-        self.client = SlackClient("")
+        self.client = SlackClient(os.environ.get("SLACK_BOT_TOKEN"))
         # We'll use this dictionary to store the state of each message object.
         # In a production environment you'll likely want to store this more
         # persistently in  a database.

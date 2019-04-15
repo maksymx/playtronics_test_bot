@@ -125,7 +125,7 @@ async def hears(request):
     This route listens for incoming events from Slack and uses the event
     handler helper function to route events to our Bot.
     """
-    slack_event = request.get_json()
+    slack_event = request.json
 
     # ============= Slack URL Verification ============ #
     # In order to verify the url of our endpoint, Slack will send a challenge
