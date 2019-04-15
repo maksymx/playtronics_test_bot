@@ -115,7 +115,7 @@ async def thanks(request):
     # the request's parameters.
     code_arg = request.args.get('code')
     # The bot's auth method to handles exchanging the code for an OAuth token
-    # pyBot.auth(code_arg)
+    pyBot.auth(code_arg)
     return jinja2_sanic.render_template("thanks.html", request, {})
 
 
