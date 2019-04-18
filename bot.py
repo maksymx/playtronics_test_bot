@@ -3,9 +3,10 @@
 Python Slack Bot class for use with the pythOnBoarding app
 """
 import os
-import message
 
 from slackclient import SlackClient
+
+import message
 
 # To remember which teams have authorized your app and what tokens are
 # associated with each team, we can store this information in memory on
@@ -16,9 +17,10 @@ authed_teams = {}
 
 class Bot(object):
     """ Instantiates a Bot object to handle Slack onboarding interactions."""
+
     def __init__(self):
         super(Bot, self).__init__()
-        self.name = "pythonboardingbot"
+        self.name = "Slackbot Admin1"
         self.emoji = ":robot_face:"
         # When we instantiate a new bot object, we can access the app
         # credentials we set earlier in our local development environment.
@@ -57,17 +59,17 @@ class Bot(object):
         # Slack returns a temporary authorization code that we'll exchange for
         # an OAuth token using the oauth.access endpoint
         auth_response = self.client.api_call(
-                                "oauth.access",
-                                client_id=self.oauth["client_id"],
-                                client_secret=self.oauth["client_secret"],
-                                code=code
-                                )
+            "oauth.access",
+            client_id=self.oauth["client_id"],
+            client_secret=self.oauth["client_secret"],
+            code=code
+        )
         # To keep track of authorized teams and their associated OAuth tokens,
         # we will save the team ID and bot tokens to the global
         # authed_teams object
         team_id = auth_response["team_id"]
         authed_teams[team_id] = {"bot_token":
-                                 auth_response["bot"]["bot_access_token"]}
+                                     auth_response["bot"]["bot_access_token"]}
         # Then we'll reconnect to the Slack Client with the correct team's
         # bot token
         self.client = SlackClient(authed_teams[team_id]["bot_token"])
@@ -247,3 +249,7 @@ class Bot(object):
                                             )
         # Update the timestamp saved on the message object
         message_obj.timestamp = post_message["ts"]
+
+
+pyBot = Bot()
+slack = pyBot.client
