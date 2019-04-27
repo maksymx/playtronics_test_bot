@@ -3,7 +3,7 @@ from sanic.response import text
 from bot import pyBot, slack
 
 
-def _process_messages(slack_event):
+def _process_messages(request, slack_event):
     # ============== Share Message Events ============= #
     # If the user has shared the onboarding message, the event type will be
     # message. We'll also need to check that this is a message that has been
@@ -18,18 +18,18 @@ def _process_messages(slack_event):
                         200, )
     else:
         user_id = slack_event["event"].get("user")
-        if user_id:
+        if user_id and request.app.users[user_id]["is_admin"]:
             slack.api_call("chat.postMessage",
-                                  channel=slack_event["event"]["channel"],
-                                  username="Slackbot Admin1",
-                                  icon_emoji=":robot_face:",
-                                  text="ololo",
-                                  attachments=[]
-                                  )
+                           channel=slack_event["event"]["channel"],
+                           username="Slackbot Admin1",
+                           icon_emoji=":robot_face:",
+                           text="ololo",
+                           attachments=[]
+                           )
         return text("olololo")
 
 
-def _process_team_join(slack_event):
+def _process_team_join(request, slack_event):
     # ================ Team Join Events =============== #
     # When the user first joins a team, the type of event will be team_join
     team_id = slack_event["team_id"]
@@ -39,7 +39,7 @@ def _process_team_join(slack_event):
     return text("Welcome Message Sent", 200, )
 
 
-def _process_reaction_added(slack_event):
+def _process_reaction_added(request, slack_event):
     # ============= Reaction Added Events ============= #
     # If the user has added an emoji reaction to the onboarding message
     team_id = slack_event["team_id"]
@@ -49,7 +49,7 @@ def _process_reaction_added(slack_event):
     return text("Welcome message updates with reactji", 200, )
 
 
-def _process_pin_added(slack_event):
+def _process_pin_added(request, slack_event):
     # =============== Pin Added Events ================ #
     # If the user has added an emoji reaction to the onboarding message
     team_id = slack_event["team_id"]
@@ -59,7 +59,22 @@ def _process_pin_added(slack_event):
     return text("Welcome message updates with pin", 200, )
 
 
-def event_handler(event_type, slack_event):
+def _process_user_change(request, slack_event):
+    # =============== Pin Added Events ================ #
+    # If the user has added an emoji reaction to the onboarding message
+    team_id = slack_event["team_id"]
+    user_id = slack_event["event"]["user"]
+    slack.api_call("chat.postMessage",
+                   channel=slack_event["event"]["channel"],
+                   username="Slackbot Admin1",
+                   icon_emoji=":robot_face:",
+                   text="Dear <username>, you've been moved from channel <channelname>",
+                   attachments=[]
+                   )
+    return text("Welcome message updates with pin", 200, )
+
+
+def event_handler(request, event_type, slack_event):
     """
     A helper function that routes events from Slack to our Bot
     by event type and subtype.
@@ -81,12 +96,13 @@ def event_handler(event_type, slack_event):
         "message": _process_messages,
         "team_join": _process_team_join,
         "reaction_added": _process_reaction_added,
-        "pin_added": _process_pin_added
+        "pin_added": _process_pin_added,
+        "user_change": _process_user_change
     }
 
     handler = mapper.get(event_type)
     if handler:
-        return handler(slack_event)
+        return handler(request, slack_event)
     # ============= Event Type Not Found! ============= #
     # If the event_type does not have a handler
     message = "You have not added an event handler for the %s" % event_type

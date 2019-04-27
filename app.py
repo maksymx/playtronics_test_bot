@@ -4,7 +4,7 @@ A routing layer for the onboarding bot tutorial built using
 [Slack's Events API](https://api.slack.com/events-api) in Python
 """
 import os
-
+import requests
 import jinja2
 import jinja2_sanic
 from sanic import Sanic
@@ -21,8 +21,33 @@ jinja2_sanic.setup(
 )
 
 
+@app.listener('before_server_start')
+async def start(app, loop):
+    users = requests.get("https://slack.com/api/users.list", params={"token": os.environ.get("SLACK_BOT_TOKEN")}).json()
+    if "members" in users:
+        app.users = {member.pop("id"): member for member in users.get("members", [])}
+
+
 @app.route("/")
 async def test(request):
+    return json({"hello": "world"})
+
+
+@app.route("/stats", methods=["POST"])
+def stats(request):
+    return
+
+
+@app.route("/moveuser", methods=["POST"])
+def moveuser(request):
+    form = request.form
+    username = form.get("user_name")
+    return json({"hello": "world"})
+
+
+@app.route("/ban", methods=["POST"])
+def moveuser(request):
+    form = request.form
     return json({"hello": "world"})
 
 
@@ -85,7 +110,7 @@ async def hears(request):
     if "event" in slack_event:
         event_type = slack_event["event"]["type"]
         # Then handle the event by event_type and have your bot respond
-        return event_handler(event_type, slack_event)
+        return event_handler(request, event_type, slack_event)
     # If our bot hears things that are not events we've subscribed to,
     # send a quirky but helpful error response
     return text("[NO EVENT IN SLACK REQUEST] These are not the droids\

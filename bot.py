@@ -14,14 +14,17 @@ import message
 # save this in a more persistent memory store.
 authed_teams = {}
 
+BOT_NAME = "Slackbot Admin1"
+BOT_EMOJI = ":robot_face:"
+
 
 class Bot(object):
     """ Instantiates a Bot object to handle Slack onboarding interactions."""
 
     def __init__(self):
         super(Bot, self).__init__()
-        self.name = "Slackbot Admin1"
-        self.emoji = ":robot_face:"
+        self.name = BOT_NAME
+        self.emoji = BOT_EMOJI
         # When we instantiate a new bot object, we can access the app
         # credentials we set earlier in our local development environment.
         self.oauth = {"client_id": os.environ.get("CLIENT_ID"),
