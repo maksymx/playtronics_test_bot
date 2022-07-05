@@ -12,7 +12,7 @@ multidict==4.5.2
 pyaml==16.9.0
 PyYAML==5.1
 requests==2.21.0
-sanic==19.3.1
+sanic==20.12.6
 six==1.10.0
 slackclient==1.0.2
 ujson==5.4.0
