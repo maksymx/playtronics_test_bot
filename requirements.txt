@@ -5,7 +5,7 @@ click==6.6
 httptools==0.0.13
 idna==2.8
 itsdangerous==0.24
-Jinja2==2.8
+Jinja2==2.11.3
 jinja2-sanic==0.1.2
 MarkupSafe==0.23
 multidict==4.5.2
